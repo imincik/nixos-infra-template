@@ -1,0 +1,5 @@
+{ mkDeployment, ... }:
+
+{
+  example = mkDeployment "example";
+}

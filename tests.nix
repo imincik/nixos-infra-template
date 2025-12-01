@@ -1,0 +1,5 @@
+{ mkTest, ... }:
+
+{
+  example = mkTest "example";
+}

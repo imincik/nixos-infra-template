@@ -1,0 +1,44 @@
+name: Evaluate
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  eval:
+    name: Evaluate project
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Enable Magic Nix cache action
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      # - uses: cachix/cachix-action@v16
+      #   with:
+      #     name: <CACHE-NAME>
+      #     authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Evaluate flake content
+        run: >
+          nix flake check --accept-flake-config --no-build
+
+  # Launch build
+  build:
+    needs: eval
+    uses: ./.github/workflows/build.yml
+    secrets: inherit
+
+  # Launch tests
+  test:
+    needs: build
+    uses: ./.github/workflows/test.yml
+    secrets: inherit

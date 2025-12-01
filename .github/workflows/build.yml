@@ -1,0 +1,29 @@
+name: Build
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+
+      - name: Enable Magic Nix cache action
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      # - uses: cachix/cachix-action@v16
+      #   with:
+      #     name: <CACHE-NAME>
+      #     authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+
+      - name: Build all packages
+        run: >
+          nix build .#all-packages --accept-flake-config

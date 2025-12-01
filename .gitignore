@@ -1,0 +1,7 @@
+result
+*.qcow2
+.pre-commit-config.yaml
+hosts/*/.terraform/*
+hosts/*/.terraform.*
+hosts/*/terraform.*
+hosts/*/config.tf.json

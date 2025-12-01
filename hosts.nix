@@ -1,0 +1,5 @@
+{ mkHost, ... }:
+
+{
+  example = mkHost "example";
+}

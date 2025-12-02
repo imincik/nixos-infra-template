@@ -32,7 +32,7 @@ in
     image = "ubuntu-24.04"; # Will be replaced by NixOS
     location = "\${var.server_location}";
     ssh_keys = [ "\${hcloud_ssh_key.${hostname}.id}" ];
-    firewall_ids = [ "\${hcloud_firewall.${hostname}.id}" ];
+    firewall_ids = [ "\${hcloud_firewall.${hostname}-ssh.id}" ];
     delete_protection = prodProtection;
     rebuild_protection = prodProtection;
 

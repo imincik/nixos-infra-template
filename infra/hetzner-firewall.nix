@@ -8,8 +8,8 @@
 
 {
   resource = {
-    hcloud_firewall.${hostname} = {
-      name = "${hostname}";
+    hcloud_firewall."${hostname}-ssh" = {
+      name = "${hostname}-ssh";
       rule = [
         {
           direction = "in";

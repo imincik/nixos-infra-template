@@ -21,6 +21,7 @@
             ../infra/variables.nix
             ../infra/hetzner-firewall.nix
             ../infra/hetzner-server.nix
+            ./../hosts/${hostname}/infra.nix
           ];
           extraArgs = {
             inherit projectConfig hostConfig hostname;

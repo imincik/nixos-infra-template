@@ -8,11 +8,6 @@
 {
   # Variables
   variable = {
-    hcloud_token = {
-      description = "Hetzner Cloud API Token";
-      type = "string";
-      sensitive = true;
-    };
     ssh_public_key = {
       description = "SSH public key for initial access";
       type = "string";

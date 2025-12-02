@@ -16,8 +16,8 @@ in
     version = "~> 1.45";
   };
 
-  # Provider
-  provider.hcloud.token = "\${var.hcloud_token}";
+  # Provider - uses HCLOUD_TOKEN environment variable
+  provider.hcloud = { };
 
   # SSH Key
   resource.hcloud_ssh_key."${hostname}" = {

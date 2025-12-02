@@ -145,11 +145,18 @@ tools are provided by deployment (admin) shell environment.
   DEPLOY_SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 ```
 
-1. Create terraform variables file `terraform.tfvars` (do only once)
+1. Create `.env` file containing Hetzner API Token (do only once)
 ```bash
+# .env
+
 # Hetzner Cloud API Token
 # Get it from: https://console.hetzner.cloud/ → Your Project → Security → API Tokens
-hcloud_token = ""
+export HCLOUD_TOKEN="<TOKEN>"
+```
+
+1. Create terraform variables file `terraform.tfvars` (do only once)
+```bash
+# terraform.tfvars
 
 # SSH public key for server access
 # Get it with: cat ~/.ssh/id_rsa.pub
@@ -162,6 +169,7 @@ server_location = "nbg1"
 
 1. Build terraform configuration
 ```bash
+  source .env
   nix build .#terraformConfigurations.$DEPLOY_HOSTNAME -o config.tf.json
 ```
 

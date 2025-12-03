@@ -61,6 +61,28 @@
           echo -e "\n🚀 Admin environment"
           echo
           echo "See README.md file for deployment instructions."
+
+          sshopts="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+
+          function host-ssh {
+            user=$(tofu output -raw server_user)
+            ip=$(tofu output -raw server_ip)
+            ssh $sshopts $user@$ip
+          }
+
+          function host-cmd {
+            user=$(tofu output -raw server_user)
+            ip=$(tofu output -raw server_ip)
+            ssh $sshopts $user@$ip $1
+          }
+
+          function host-upload-key {
+            user=$(tofu output -raw server_user)
+            ip=$(tofu output -raw server_ip)
+            host-cmd $user@$ip "sudo mkdir -pv /root/.agenix"
+            scp $sshopts $1 $user@$ip:/tmp/agenix.key
+            host-cmd $user@$ip "sudo mv -v /tmp/agenix.key /root/.agenix/agenix.key"
+          }
         '';
       };
     };

@@ -127,31 +127,34 @@ tools are provided by deployment (admin) shell environment.
 
 1. Add host to `deployment.nix` file (do only once)
 
-1. Enter deployment (admin) shell environment
-```bash
-  nix develop .#admin
-```
-
 1. Set environment to `prod`
 ```bash
   echo prod > environment.txt
 ```
 
-1. Move to host directory and set some variables
+1. Move to host directory (this will activate direnv)
 ```bash
   cd hosts/<hostname>
+```
 
-  DEPLOY_HOSTNAME=$(basename "$PWD")
-  DEPLOY_SSH_OPTIONS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+1. Launch admin shell environment
+```bash
+  nix develop .#admin
 ```
 
 1. Create `.env` file containing Hetzner API Token (do only once)
 ```bash
 # .env
 
+# Hostname detection
+export DEPLOY_HOSTNAME=$(basename "$PWD")
+
 # Hetzner Cloud API Token
 # Get it from: https://console.hetzner.cloud/ → Your Project → Security → API Tokens
 export HCLOUD_TOKEN="<TOKEN>"
+```
+```
+  source .env
 ```
 
 1. Create terraform variables file `terraform.tfvars` (do only once)
@@ -169,7 +172,6 @@ server_location = "nbg1"
 
 1. Build terraform configuration
 ```bash
-  source .env
   nix build .#terraformConfigurations.$DEPLOY_HOSTNAME -o config.tf.json
 ```
 
@@ -181,24 +183,17 @@ server_location = "nbg1"
 1. Deploy initial resources (ssh key, firewall, initial server, ...)
 ```bash
   tofu apply
-  DEPLOY_IP_ADDRESS=$(tofu output -raw server_ip)
 ```
 
 1. Deploy NixOS server
 ```bash
-  nixos-anywhere --flake .#$DEPLOY_HOSTNAME root@$DEPLOY_IP_ADDRESS
+  nixos-anywhere --flake .#$DEPLOY_HOSTNAME root@$(tofu output -raw server_ip)
 ```
 
-1. Test connection to NixOS server
+1. Upload secrets decryption key (`id_ed25519_nixos_imincik_app`)
 ```bash
-  ssh $DEPLOY_SSH_OPTIONS admin@$DEPLOY_IP_ADDRESS "uname -a"
-```
+  set DEPLOY_PRIVATE_SSH_KEY ~/.ssh/id_ed25519_nixos_imincik_app
 
-1. Upload secrets decryption key
-```bash
-  ssh $DEPLOY_SSH_OPTIONS admin@$DEPLOY_IP_ADDRESS "sudo mkdir /root/.agenix"
-  scp $DEPLOY_SSH_OPTIONS id_ed25519_admin admin@$DEPLOY_IP_ADDRESS:/tmp/agenix.key
-  ssh $DEPLOY_SSH_OPTIONS admin@$DEPLOY_IP_ADDRESS "sudo mv /tmp/agenix.key /root/.agenix/agenix.key"
-
-  ssh $DEPLOY_SSH_OPTIONS admin@$DEPLOY_IP_ADDRESS "sudo restart"
+  host-upload-key $DEPLOY_PRIVATE_SSH_KEY
+  host-cmd reboot
 ```

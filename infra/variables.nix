@@ -26,6 +26,10 @@
 
   # Outputs
   output = {
+    server_user = {
+      value = "${projectConfig.adminUser}";
+      description = "Server admin user";
+    };
     server_ip = {
       value = "\${hcloud_server.${hostname}.ipv4_address}";
       description = "Server IPv4 address";
@@ -33,10 +37,6 @@
     server_id = {
       value = "\${hcloud_server.${hostname}.id}";
       description = "Server ID";
-    };
-    deployment_cmd = {
-      value = "nixos-anywhere --flake .#\${hcloud_server.${hostname}.name} root@\${hcloud_server.${hostname}.ipv4_address}";
-      description = "NixOS deployment command";
     };
   };
 }

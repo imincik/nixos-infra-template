@@ -7,7 +7,7 @@
 }:
 
 let
-  prodProtection = if projectConfig.environmentName == "prod" then "true" else "false";
+  prodProtection = projectConfig.environmentName == "prod";
 in
 {
   # Terraform settings
@@ -33,6 +33,7 @@ in
     location = "\${var.server_location}";
     ssh_keys = [ "\${hcloud_ssh_key.${hostname}.id}" ];
     firewall_ids = [ "\${hcloud_firewall.${hostname}-ssh.id}" ];
+    backups = prodProtection;
     delete_protection = prodProtection;
     rebuild_protection = prodProtection;
 

@@ -20,19 +20,21 @@ On NixOS system, add following configuration and rebuild your system.
   };
 ```
 
-Then,
-
-* Run `nix develop` to launch local shell environment
-
-* Or run `nix run .#<hostname>-vm` to launch VM
-
-
-## Shell environment
-
-1. Launch local shell environment
+Then, deploy example host to Hetzner
 
 ```bash
-  nix develop
+  nix develop .#deployment
+
+  echo "export HCLOUD_TOKEN="<HETZNER-TOKEN>" > .env
+  source .env
+
+  nix build .#terraformConfigurations.all -o config.tf.json
+
+  tofu init
+  tofu apply
+
+  export DEPLOY_HOSTNAME=example
+  nixos-anywhere --flake .#$DEPLOY_HOSTNAME root@$(tofu output -raw ${DEPLOY_HOSTNAME}_server_ip)
 ```
 
 

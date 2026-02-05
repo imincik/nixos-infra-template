@@ -235,3 +235,9 @@ After infrastructure is deployed, install NixOS on each server:
 ```
 
 Repeat for each host.
+
+
+## Commercial support
+
+Considering [Nix/NixOS](https://nixos.org/) or already using it and need expert
+help? Get in touch with [me](https://www.imincik.com).

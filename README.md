@@ -100,10 +100,10 @@ environment type to `dev`:
 1. Create identities (users and/or systems able to use secrets) and secrets in
    [secrets/secrets.nix](secrets/secrets.nix) file
 
-1. Activate admin shell environment and change directory
+1. Activate deployment shell environment and change directory
 
 ```bash
-  nix develop .#admin
+  nix develop .#deployment
   cd secrets
 ```
 
@@ -134,7 +134,7 @@ for information how to use secrets in configuration.
 
 NixOS server deployment process is based on [OpenTofu](https://opentofu.org/)
 and [NixOS Anywhere](https://github.com/nix-community/nixos-anywhere). Both
-tools are provided by deployment (admin) shell environment.
+tools are provided by deployment shell environment.
 
 All infrastructure (SSH key, firewalls, servers) is managed from a single
 unified Terraform deployment in the project root directory.
@@ -164,9 +164,9 @@ unified Terraform deployment in the project root directory.
   echo prod > environment.txt
 ```
 
-1. Launch admin shell environment
+1. Launch deployment shell environment
 ```bash
-  nix develop .#admin
+  nix develop .#deployment
 ```
 
 1. Create `.env` file in project root containing Hetzner API Token (do only once)

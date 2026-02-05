@@ -44,8 +44,8 @@
           '';
       };
 
-      # Sysadmin environment
-      devShells.admin = pkgs.mkShell {
+      # Deployment environment
+      devShells.deploy = pkgs.mkShell {
         packages = [
           # Secrets management
           inputs.agenix.packages.${system}.agenix
@@ -58,7 +58,7 @@
           inputs.nixos-anywhere.packages.${system}.default
         ];
         shellHook = ''
-          echo -e "\n🚀 Admin environment"
+          echo -e "\n🚀 Deployment environment"
           echo
           echo "See README.md file for deployment instructions."
 

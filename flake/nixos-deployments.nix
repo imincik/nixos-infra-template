@@ -26,8 +26,8 @@
         inherit system;
         modules = [
           ../infra/variables.nix
-          ../infra/hetzner-ssh-key.nix
-          ../infra/hetzner-all-hosts.nix
+          ../infra/providers/hetzner/ssh-key.nix
+          ../infra/providers/hetzner/hosts.nix
         ];
         extraArgs = {
           inherit projectConfig hosts;

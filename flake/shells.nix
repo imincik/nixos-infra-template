@@ -65,23 +65,23 @@
           sshopts="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
           function host-ssh {
-            user=$(tofu output -raw server_user)
-            ip=$(tofu output -raw server_ip)
+            user=$(tofu output -raw admin_user)
+            ip=$(tofu output -raw $1_server_ip)
             ssh $sshopts $user@$ip
           }
 
           function host-cmd {
-            user=$(tofu output -raw server_user)
-            ip=$(tofu output -raw server_ip)
-            ssh $sshopts $user@$ip $1
+            user=$(tofu output -raw admin_user)
+            ip=$(tofu output -raw $1_server_ip)
+            ssh $sshopts $user@$ip $2
           }
 
           function host-upload-key {
-            user=$(tofu output -raw server_user)
-            ip=$(tofu output -raw server_ip)
-            host-cmd $user@$ip "sudo mkdir -pv /root/.agenix"
-            scp $sshopts $1 $user@$ip:/tmp/agenix.key
-            host-cmd $user@$ip "sudo mv -v /tmp/agenix.key /root/.agenix/agenix.key"
+            user=$(tofu output -raw admin_user)
+            ip=$(tofu output -raw $1_server_ip)
+            host-cmd $1 "sudo mkdir -pv /root/.agenix"
+            scp $sshopts $2 $user@$ip:/tmp/agenix.key
+            host-cmd $1 "sudo mv -v /tmp/agenix.key /root/.agenix/agenix.key"
           }
         '';
       };

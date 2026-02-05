@@ -42,19 +42,13 @@ Then,
 
 1. Add new host to `hosts.nix` file
 
-1. Add new host to `deployments.nix` file
-
 1. Create host configuration in `hosts/<hostname>` directory and
    **add all files to Git**
 
-1. Create `hosts/<hostname>/config.nix` with domain and infrastructure settings
+1. Create `hosts/<hostname>/config.nix` with domain
 ```nix
 {
   domain = "hostname.example.com";
-  infra = {
-    server_type = "cx23";
-    server_location = "nbg1";
-  };
 }
 ```
 
@@ -62,9 +56,6 @@ Then,
 
 1. Implement host specific configuration in `services.nix` file.
    See [NixOS options](https://search.nixos.org/options)
-
-1. Optionally, create `hosts/<hostname>/infra.nix` for host-specific
-   infrastructure (additional firewalls, etc.)
 
 1. Optionally, implement host specific development configuration in
    `development.nix` file
@@ -93,6 +84,8 @@ environment type to `dev`:
 ```
 
 ## Tests
+
+1. Add new host to `tests.nix` file
 
 1. Run all tests
 
@@ -148,15 +141,18 @@ unified Terraform deployment in the project root directory.
 
 1. Add new hosts to `deployments.nix` file
 
-1. Configure per-host infrastructure variables in `hosts/<hostname>/config.nix`
+1. Configure per-host infrastructure settings in `hosts/<hostname>/infra.nix`
 ```nix
 {
-  domain = "hostname.example.com";
-
-  # Infrastructure variables
-  infra = {
+  # Infrastructure configuration
+  config = {
     server_type = "cx23";        # Hetzner server type
     server_location = "nbg1";    # Hetzner datacenter location
+  };
+
+  # Terraform resources (function)
+  terraform = { projectConfig, hostname, hostConfig, ... }: {
+    # Optional: Add host-specific firewalls, etc.
   };
 }
 ```
@@ -188,8 +184,9 @@ export HCLOUD_TOKEN="<TOKEN>"
   nix build .#terraformConfigurations.all -o config.tf.json
 ```
 
-   **Note:** After modifying `deployments.nix` or host configurations, you must
-   rebuild the configuration with this command before running `tofu apply`.
+   **Note:** After modifying `deployments.nix` or host infrastructure settings
+   in `infra.nix`, you must rebuild the configuration with this command before
+   running `tofu apply`.
 
 1. Initialize terraform environment (run only once)
 ```bash
@@ -225,12 +222,12 @@ After infrastructure is deployed, install NixOS on each server:
   nixos-anywhere --flake .#$DEPLOY_HOSTNAME root@$(tofu output -raw ${DEPLOY_HOSTNAME}_server_ip)
 ```
 
-1. Upload secrets decryption key (`id_ed25519_nixos_imincik_app`)
+1. Deploy secrets decryption key
 ```bash
-  set DEPLOY_PRIVATE_SSH_KEY ~/.ssh/id_ed25519_nixos_imincik_app
+  export DEPLOY_SECRETS_DECRYPTION_KEY=~/.ssh/id_ed25519_secrets
 
-  host-upload-key $DEPLOY_PRIVATE_SSH_KEY
-  host-cmd "sudo reboot"
+  host-upload-key $DEPLOY_HOSTNAME $DEPLOY_SECRETS_DECRYPTION_KEY
+  host-cmd $DEPLOY_HOSTNAME "sudo reboot"
 ```
 
 Repeat for each host.

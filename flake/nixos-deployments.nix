@@ -10,9 +10,15 @@
     let
       system = "x86_64-linux";
 
-      # Import deployments.nix with mkDeployment function
+      # Import deployments.nix with mkDeployment function that merges config.nix and infra.nix
       hosts = import ../deployments.nix {
-        mkDeployment = hostname: import ../hosts/${hostname}/config.nix;
+        mkDeployment =
+          hostname:
+          let
+            configNix = import ../hosts/${hostname}/config.nix;
+            infraNix = import ../hosts/${hostname}/infra.nix;
+          in
+          configNix // { infra = infraNix.config; };
       };
 
       # Single unified deployment for all infrastructure

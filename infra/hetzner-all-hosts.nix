@@ -60,7 +60,10 @@ let
   # Import host-specific extensions (firewalls, etc.)
   mkHostExtensions =
     hostname: hostConfig:
-    import ../hosts/${hostname}/infra.nix { inherit projectConfig hostname hostConfig; };
+    let
+      infraModule = import ../hosts/${hostname}/infra.nix;
+    in
+    infraModule.terraform { inherit projectConfig hostname hostConfig; };
 in
 lib.mkMerge [
   # Terraform provider settings

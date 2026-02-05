@@ -61,7 +61,7 @@ let
   mkHostExtensions =
     hostname: hostConfig:
     let
-      infraModule = import ../hosts/${hostname}/infra.nix;
+      infraModule = import ../../../hosts/${hostname}/infra.nix;
     in
     infraModule.terraform { inherit projectConfig hostname hostConfig; };
 in

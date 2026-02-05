@@ -45,7 +45,7 @@
       };
 
       # Deployment environment
-      devShells.deploy = pkgs.mkShell {
+      devShells.deployment = pkgs.mkShell {
         packages = [
           # Secrets management
           inputs.agenix.packages.${system}.agenix

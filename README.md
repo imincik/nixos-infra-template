@@ -1,4 +1,4 @@
-# NixOS infrastructure template
+# NixOS Framework
 
 ## Quick start
 

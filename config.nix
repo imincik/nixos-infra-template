@@ -1,5 +1,5 @@
 {
-  thisRepository = "github:imincik/nixos-infra-template";
+  thisRepository = "github:imincik/nixos-framework";
 
   adminUser = "admin";
   adminEmail = "admin@example.com";

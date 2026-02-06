@@ -1,5 +1,5 @@
 {
-  description = "NixOS infrastructure";
+  description = "NixOS Framework";
 
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";

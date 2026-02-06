@@ -2,8 +2,13 @@ toplevel@{
   inputs,
   config,
   projectConfig,
+  nixosFrameworkConfig,
   ...
 }:
+
+let
+  rootPath = nixosFrameworkConfig.rootPath;
+in
 
 {
   perSystem =
@@ -24,10 +29,10 @@ toplevel@{
       mkTest =
         hostname:
         let
-          hostConfig = import ./../hosts/${hostname}/config.nix;
+          hostConfig = import (rootPath + "/hosts/${hostname}/config.nix");
         in
         pkgs.testers.nixosTest (
-          import ./../hosts/${hostname}/test.nix {
+          import (rootPath + "/hosts/${hostname}/test.nix") {
             inherit
               inputs
               lib
@@ -39,7 +44,7 @@ toplevel@{
           }
         );
 
-      allTests = (import ../tests.nix { inherit mkTest; });
+      allTests = (import (rootPath + "/tests.nix") { inherit mkTest; });
     in
     {
       checks = allTests // {

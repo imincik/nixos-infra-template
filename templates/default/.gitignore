@@ -1,0 +1,16 @@
+# Nix build results
+result
+result-*
+
+# Pre-commit
+.pre-commit-config.yaml
+
+# Development/testing artifacts
+*.qcow2
+.env
+
+# Terraform (if using deployments)
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate*
+config.tf.json

@@ -2,11 +2,13 @@
   inputs,
   config,
   projectConfig,
+  nixosFrameworkConfig,
   ...
 }:
 
 let
   inherit (inputs.nixpkgs) lib;
+  rootPath = nixosFrameworkConfig.rootPath;
 in
 
 {
@@ -16,7 +18,7 @@ in
       mkHost =
         hostname:
         let
-          hostConfig = import ./../hosts/${hostname}/config.nix;
+          hostConfig = import (rootPath + "/hosts/${hostname}/config.nix");
           system = "x86_64-linux";
         in
         lib.nixosSystem {
@@ -24,13 +26,28 @@ in
           modules = [
             inputs.disko.nixosModules.disko
             inputs.agenix.nixosModules.default
-            ./../hosts/${hostname}
+            {
+              _module.args = {
+                inherit
+                  inputs
+                  projectConfig
+                  hostConfig
+                  hostname
+                  ;
+              };
+            }
+            (rootPath + "/hosts/${hostname}")
           ]
+          ++ nixosFrameworkConfig.extraModules
           ++ lib.optional (projectConfig.environmentName == "dev") (
-            lib.warn "Using insecure development configuration (profiles/development.nix) !" ../profiles/development.nix
+            lib.warn "Using insecure development configuration (profiles/development.nix)!" (
+              rootPath + "/profiles/development.nix"
+            )
           )
           ++ lib.optional (projectConfig.environmentName == "dev") (
-            lib.warn "Using insecure development configuration (hosts/${hostname}/development.nix) !" ./../hosts/${hostname}/development.nix
+            lib.warn "Using insecure development configuration (hosts/${hostname}/development.nix)!" (
+              rootPath + "/hosts/${hostname}/development.nix"
+            )
           );
           specialArgs = {
             inherit
@@ -42,5 +59,5 @@ in
           };
         };
     in
-    import ../hosts.nix { inherit mkHost; };
+    import (rootPath + "/hosts.nix") { inherit mkHost; };
 }

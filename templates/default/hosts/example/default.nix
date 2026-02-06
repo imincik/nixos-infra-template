@@ -1,4 +1,5 @@
 {
+  inputs,
   lib,
   pkgs,
   projectConfig,
@@ -16,9 +17,9 @@
     # System users
     ../../users/default.nix
 
-    # System configuration
-    ../../profiles/common.nix
-    ../../profiles/auto-upgrade.nix
+    # System configuration (from framework)
+    (inputs.nixos-framework + "/profiles/common.nix")
+    (inputs.nixos-framework + "/profiles/auto-upgrade.nix")
 
     # Host specific configuration
     ./services.nix

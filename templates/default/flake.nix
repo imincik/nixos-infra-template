@@ -2,6 +2,8 @@
   description = "NixOS Framework";
 
   inputs = {
+    nixos-framework.url = "github:imincik/nixos-framework";
+
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
@@ -46,34 +48,17 @@
 
       imports = [
         inputs.git-hooks.flakeModule
-        ./flake/formatter.nix
-        ./flake/hooks.nix
+        inputs.nixos-framework.flakeModules.default
       ];
 
-      # Export the module for other projects to use
-      flake.flakeModules = {
-        default = ./flake-module.nix;
-        nixos-framework = ./flake-module.nix;
-      };
-
-      # Export templates for creating new projects
-      flake.templates = {
-        default = {
-          path = ./templates/default;
-          description = "A new NixOS infrastructure project using nixos-framework";
-          welcomeText = ''
-            # NixOS Framework project created!
-
-            ## Next Steps
-
-            1. Update `config.nix` with your admin user and SSH key
-            2. Update `hosts/example/config.nix` with your domain
-            3. Test locally: `nix run .#example-vm`
-            4. See README.md for more information
-
-            Documentation: https://github.com/imincik/nixos-framework
-          '';
-        };
+      nixosFramework = {
+        enable = true;
+        rootPath = ./.;
+        projectConfig = {
+          configRevision = if self ? rev then self.rev else "dirty";
+          environmentName = builtins.replaceStrings [ "\n" ] [ "" ] (builtins.readFile ./environment.txt);
+        }
+        // (import ./config.nix);
       };
     };
 }

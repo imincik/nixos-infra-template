@@ -30,11 +30,24 @@ jobs:
       #     name: <CACHE-NAME>
       #     authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
 
-      - name: Run tests
+      - name: Run framework checks
         run: nix flake check --accept-flake-config
+
+      - name: Initialize project from template
+        run: |
+          mkdir -p ${{ runner.temp }}/test-project
+          cd ${{ runner.temp }}/test-project
+
+          nix flake init -t ${{ github.workspace }}
+          sed -i 's|nixos-framework.url = "github:imincik/nixos-framework";|nixos-framework.url = "path:${{ github.workspace }}";|' flake.nix
+
+      - name: Run template tests
+        run: nix flake check --accept-flake-config
+        working-directory: ${{ runner.temp }}/test-project
 
       - name: Test deployment configuration
         run: |
           nix build .#terraformConfigurations.all -o config.tf.json
           nix develop .#deployment --command tofu init
           nix develop .#deployment --command tofu validate
+        working-directory: ${{ runner.temp }}/test-project

@@ -1,4 +1,9 @@
-{ inputs, projectConfig, ... }:
+{
+  inputs,
+  projectConfig,
+  nixosFrameworkConfig,
+  ...
+}:
 
 {
   perSystem =
@@ -11,10 +16,8 @@
     }:
 
     let
-      packages = [
-      ];
-      pythonPackages = [
-      ];
+      packages = nixosFrameworkConfig.extraDevPackages;
+      pythonPackages = [ ];
       pythonEnv = (pkgs.python3.withPackages (p: pythonPackages));
     in
     {
@@ -56,7 +59,8 @@
           pkgs.opentofu
           inputs.terranix.packages.${system}.default
           inputs.nixos-anywhere.packages.${system}.default
-        ];
+        ]
+        ++ nixosFrameworkConfig.extraDeploymentPackages;
         shellHook = ''
           echo -e "\n🚀 Deployment environment"
           echo

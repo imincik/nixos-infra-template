@@ -3,18 +3,10 @@ let
 
   # Admin users
   projectConfig = import ../config.nix;
-
-  adminUsersFile = import ../users/default.nix {
-    config = { };
-    pkgs = { };
-    projectConfig = projectConfig;
-  };
-  adminUsers = map (
-    f: builtins.readFile f
-  ) adminUsersFile.users.users.${projectConfig.adminUser}.openssh.authorizedKeys.keyFiles;
+  adminUsers = [ projectConfig.adminPublicSSHkey ];
 
   # NixOS host
-  # id_ed25519_nixox.pub
+  # id_ed25519_nixos.pub
   nixosHost = "TODO";
 
 in

@@ -1,7 +1,7 @@
 let
   # IDENTITIES
 
-  # Admin users
+  # Admin user
   projectConfig = import ../config.nix;
 
   adminUsersFile = import ../users/default.nix {
@@ -9,20 +9,16 @@ let
     pkgs = { };
     projectConfig = projectConfig;
   };
-  adminUsers = map (
-    f: builtins.readFile f
-  ) adminUsersFile.users.users.${projectConfig.adminUser}.openssh.authorizedKeys.keyFiles;
+  adminUser = adminUsersFile.users.users.${projectConfig.adminUser}.openssh.authorizedKeys.keys;
 
   # NixOS host
-  # id_ed25519_nixox.pub
   nixosHost = "TODO";
 
 in
 {
   # SECRETS
-
   # <SECRET-NAME>.age.publicKeys = <LIST-OF-IDENTITIES-ALLOWED-TO-DECRYPT-THE-SECRET>;
 
   # Permissions: read access to code, commit statuses, and metadata
-  "nixosAutoUpgradeToken.age".publicKeys = adminUsers ++ [ nixosHost ];
+  "nixosAutoUpgradeToken.age".publicKeys = adminUser ++ [ nixosHost ];
 }

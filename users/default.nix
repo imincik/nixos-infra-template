@@ -7,7 +7,6 @@
 
 let
   extraGroups = [ "wheel" ];
-
 in
 {
   users.users.${projectConfig.adminUser} = {
@@ -15,8 +14,8 @@ in
     isNormalUser = true;
     home = "/home/${projectConfig.adminUser}";
     extraGroups = extraGroups;
-    openssh.authorizedKeys.keyFiles = [
-      ./imincik.pub # FIXME: replace this whith your own key
+    openssh.authorizedKeys.keys = [
+      projectConfig.adminPublicSSHkey
     ];
     shell = pkgs.bash;
   };
